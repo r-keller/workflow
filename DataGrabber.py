@@ -71,7 +71,7 @@ for deviceName in deviceNames:
     columns = (time_str+deviceName, deviceName) # Will get these set up higher.
     dfdict[deviceName] = pd.read_csv(tempfilename, delim_whitespace=True, names=columns, skiprows=1)
     timestamps_thisdevice = pd.to_datetime(dfdict[deviceName][time_str+deviceName].values, unit = 's');
-    dfdict[deviceName][time_str + deviceName] = timestamps_thisdevice; # convert to convential time
+    dfdict[deviceName][time_str + deviceName] = timestamps_thisdevice; # convert to conventional time
     if debug: print (dfdict[deviceName])
 
 if debug: print (dfdict.values())

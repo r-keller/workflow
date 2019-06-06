@@ -1,6 +1,6 @@
 import h5py
 import matplotlib
-matplotlib.use('agg')  #Workaround for missing tkinter
+#matplotlib.use('agg')  #Workaround for missing tkinter
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -23,13 +23,14 @@ def read_URL_to_file (URL, filename):
 one_day = datetime.timedelta(days=1)
 one_sec = datetime.timedelta(seconds=1)
 
-now = datetime.datetime.now()
-starttime = '{0:%Y-%m-%d+%H:%M:%S}'.format(now - one_sec)
-stopptime = '{0:%Y-%m-%d+%H:%M:%S}'.format(now )
+# utc offset (cdt)
+utc_offset = datetime.timedelta(hours=5);
 
-##starttime = '{0:%Y-%m-%d}'.format(now - one_day)
-##stopptime = '{0:%Y-%m-%d}'.format(now )
-##
+begin = datetime.datetime(2019, 6, 5, 0, 0, 0)
+end   = datetime.datetime(2019, 6, 6, 0, 0);
+starttime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset - one_sec)
+stopptime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset)
+
 # logger_get ACL command documentation: https://www-bd.fnal.gov/issues/wiki/ACLCommandLogger_get
 URL = "http://www-ad.fnal.gov/cgi-bin/acl.pl?acl=logger_get/date_format='utc_seconds'/ignore_db_format/start=\""+starttime+"\"/end=\""+stopptime+"\"/node="
 
@@ -66,9 +67,11 @@ for deviceName in deviceNames:
         # Write data to file
         file.write(response.content)
     # Dump the file into a pandas DataFrame 
-    columns = ('utc_seconds'+deviceName, deviceName) # Will get these set up higher.
+    time_str = 'time_'
+    columns = (time_str+deviceName, deviceName) # Will get these set up higher.
     dfdict[deviceName] = pd.read_csv(tempfilename, delim_whitespace=True, names=columns, skiprows=1)
-    timestamps_thisdevice = dfdict[deviceName]['utc_seconds'+deviceName].values
+    timestamps_thisdevice = pd.to_datetime(dfdict[deviceName][time_str+deviceName].values, unit = 's');
+    dfdict[deviceName][time_str + deviceName] = timestamps_thisdevice; # convert to convential time
     if debug: print (dfdict[deviceName])
 
 if debug: print (dfdict.values())

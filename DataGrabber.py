@@ -29,7 +29,8 @@ utc_offset = datetime.timedelta(hours=5);
 
 end   = datetime.datetime(2019, 6, 11, 0, 0);
 
-for _ in xrange(10)
+# loop over accessible history (10 days)
+for _ in xrange(10): 
     starttime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset - one_day)
     stopptime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset)
     end = end - one_day;

@@ -21,14 +21,15 @@ def read_URL_to_file (URL, filename):
                 
     return 
 one_day = datetime.timedelta(days=1)
+one_hour = datetime.timedelta(hours = 1)
 one_sec = datetime.timedelta(seconds=1)
 
 # utc offset (cdt)
 utc_offset = datetime.timedelta(hours=5);
 
-begin = datetime.datetime(2019, 6, 5, 0, 0, 0)
-end   = datetime.datetime(2019, 6, 6, 0, 0);
-starttime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset - one_sec)
+begin = datetime.datetime(2019, 6, 8, 0, 0, 0)
+end   = datetime.datetime(2019, 6, 9, 0, 0);
+starttime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset - one_day)
 stopptime = '{0:%Y-%m-%d+%H:%M:%S}'.format(end-utc_offset)
 
 # logger_get ACL command documentation: https://www-bd.fnal.gov/issues/wiki/ACLCommandLogger_get
@@ -78,4 +79,11 @@ if debug: print (dfdict.values())
 df = pd.concat(dfdict.values(), axis=1)
 h5key = 'x' #str(time.time())
 #Fun with hdf5
-df.to_hdf('moardata.h5', key=h5key, mode='w')
+#df.to_hdf('moardata.h5', key=h5key, mode='w')
+st1 = starttime.replace('+','-')
+st2 = stopptime.replace('+','-')
+st1 = st1.replace(':','-')
+st2 = st2.replace(':','-')
+st1 = st1.replace('-','')
+st2 = st2.replace('-','')
+df.to_csv(st1+'-'+st2+'.csv')
